@@ -1,10 +1,16 @@
 const TelegramBot = require("node-telegram-bot-api");
 require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webAppUrl = "https://master--stalwart-phoenix-926558.netlify.app/";
 
 const bot = new TelegramBot(token, { polling: true });
+const app = express();
+
+app.use(express.json());
+app.use(cors());
 
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
@@ -57,3 +63,29 @@ bot.on("message", async (msg) => {
     }
   }
 });
+app.post("/web-data", async (req, res) => {
+  const { queryId, products, totalPrice } = req.body;
+  try {
+    await bot.answerWebAppQuery(queryId, {
+      type: "article",
+      id: queryId,
+      title: "Успешная покупка!",
+      input_message_content: {
+        message_text: `Спасибо за покупку! Вы преобрели товар на сумму + ${totalPrice} zl`,
+      },
+    });
+    return res.status(200).json({});
+  } catch (e) {
+    await bot.answerWebAppQuery(queryId, {
+      type: "article",
+      id: queryId,
+      title: "Не удалось преобрести товар",
+      input_message_content: {
+        message_text: "Не удалось преобрести товар",
+      },
+    });
+    return res.status(500).json({});
+  }
+});
+const PORT = 8000;
+app.listen(() => console.log(`Server started on ${PORT}`));
