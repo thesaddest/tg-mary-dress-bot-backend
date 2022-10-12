@@ -2,7 +2,7 @@ const TelegramBot = require("node-telegram-bot-api");
 require("dotenv").config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const webAppUrl = "https://google.com";
+const webAppUrl = "https://master--stalwart-phoenix-926558.netlify.app/";
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -11,17 +11,49 @@ bot.on("message", async (msg) => {
   const text = msg.text;
 
   if (text === "/start") {
-    // await bot.sendMessage(chatId, "Приветик", {
-    //   reply_markup: {
-    //     keyboard: [[{ text: "Нажми сюда", web_app: { url: webAppUrl } }]],
-    //   },
-    // });
-    await bot.sendMessage(chatId, "Received your message", {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "Сделать заказ", web_app: { url: webAppUrl } }],
-        ],
-      },
-    });
+    await bot.sendMessage(
+      chatId,
+      "Приветик от marydressbot, вы можете сделать заказ по кнопочке ниже:",
+      {
+        reply_markup: {
+          keyboard: [
+            [{ text: "Заполнить форму", web_app: { url: webAppUrl + "form" } }],
+          ],
+        },
+      }
+    );
+
+    await bot.sendMessage(
+      chatId,
+      "Приветик от marydressbot, вы можете сделать заказ по кнопочке ниже:",
+      {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "Сделать заказ", web_app: { url: webAppUrl } }],
+          ],
+        },
+      }
+    );
+  }
+
+  if (msg?.web_app_data?.data) {
+    try {
+      const data = JSON.parse(msg?.web_app_data?.data);
+
+      await bot.sendMessage(
+        chatId,
+        `Спасибо за обратную связь, ${data?.name} ${data?.surName}!`
+      );
+
+      setTimeout(async () => {
+        await bot.sendMessage(
+          chatId,
+          "Мы свяжемся с вами для подтверждения заказа по номеру: " +
+            data?.telephone
+        );
+      }, 1000);
+    } catch (e) {
+      console.log(e);
+    }
   }
 });
