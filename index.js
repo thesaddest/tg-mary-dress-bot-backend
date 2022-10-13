@@ -6,7 +6,7 @@ const cors = require("cors");
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webAppUrl = "https://master--stalwart-phoenix-926558.netlify.app/";
 
-const bot = new TelegramBot(token, { polling: true });
+const bot = new TelegramBot(token);
 
 const app = express();
 
