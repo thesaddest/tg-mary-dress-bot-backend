@@ -28,7 +28,7 @@ bot.on("message", async (msg) => {
 
       await bot.sendMessage(
         chatId,
-        `Спасибо за обратную связь, ${data?.inputs?.customerName}!`
+        `Спасибо за заказ на сумму ${data?.totalPrice} zl, ${data?.inputs?.customerName}!`
       );
 
       setTimeout(async () => {
