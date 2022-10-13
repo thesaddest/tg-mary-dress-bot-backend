@@ -1,10 +1,17 @@
 const TelegramBot = require("node-telegram-bot-api");
 require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webAppUrl = "https://master--stalwart-phoenix-926558.netlify.app/";
 
 const bot = new TelegramBot(token, { polling: true });
+
+const app = express();
+
+app.use(express.json());
+app.use(cors());
 
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
@@ -43,3 +50,7 @@ bot.on("message", async (msg) => {
     }
   }
 });
+
+const PORT = 8080;
+
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
